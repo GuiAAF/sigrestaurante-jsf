@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<ui:composition template="/WEB-INF/templates/Layout.xhtml">
+
+	<ui:define name="content">
+
+		<h1 class="aw-page-title">Ofertas disponíveis</h1>
+
+
+		<p:growl id="idMessagesSucesso" showDetail="true" autoUpdate="true"
+			closable="true" severity="info" />
+		<p:messages id="idMessagesErrors" autoUpdate="true" closable="true"
+			showDetail="true" severity="error" />
+			
+		<h:form id="frm">
+			<p:dataGrid var="oferta" id="dataTableUsuarios"
+				value="#{lista_Oferta_Aluno.ofertas}" columns="5" layout="grid" rows="12"
+				paginator="true" style="margin-top:20px">
+				<f:facet name="header">
+            	Ofertas disponíveis para você!!(Seus creditos #{indexBean.userLogado().creditos})
+        		</f:facet>
+
+				<p:panel header="#{oferta.dataOferta}" style="text-align:center">
+					<h:panelGrid columns="1">
+						<p:outputLabel value="#{oferta.msgExplicacao}"
+							rendered="#{!oferta.ofertada}" />
+
+						<h:panelGrid columns="2" style="margin-bottom:10px"
+							cellpadding="5">
+							<h:outputText value="Almoço ?: " rendered="#{oferta.ofertada}"/>
+							<p:selectBooleanButton id="value1" value="#{oferta.almoco}"
+								onLabel="Sim" offLabel="Não" style="width:60px" rendered="#{oferta.ofertada}"/>
+							<h:outputText value="Janta ?: " rendered="#{oferta.ofertada}"/>
+							<p:selectBooleanButton id="value2" value="#{oferta.janta}"
+								onLabel="Sim" offLabel="Não" style="width:60px" rendered="#{oferta.ofertada}"/>
+						</h:panelGrid>
+						<p:commandButton id="salvar" value="Salvar" icon="ui-icon-check"
+							action="#{lista_Oferta_Aluno.update(oferta)}" update=":frm" rendered="#{oferta.ofertada}">
+							</p:commandButton>
+					</h:panelGrid>
+				</p:panel>
+
+			</p:dataGrid>
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>

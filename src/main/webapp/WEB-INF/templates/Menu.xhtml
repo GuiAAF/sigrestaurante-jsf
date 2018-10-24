@@ -1,0 +1,113 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+	<nav class="aw-menu">
+		<ul>
+			<li><p:link href="/paginas/protegido/index.xhtml"
+					onclick="clearBreadCrumbs()">
+					<i class="fa fa-home"></i>
+					<span>Home</span>
+				</p:link></li>
+			<h:form rendered="#{menu.isUserInRole('ADMIN')}">
+				<li><h:link
+						outcome="/paginas/protegido/admin/Lista_Editais.xhtml">
+						<i class="fa fa-file-text"></i>Editais</h:link>
+					<ul class="dropdown-menu" role="menu">
+						<li><h:link
+								outcome="/paginas/protegido/admin/Salvar_Edital.xhtml">
+								Novo
+								<i class="fa fa-plus-circle"></i>
+							</h:link></li>
+						<li><h:link
+								outcome="/paginas/protegido/admin/Buscar_Editais.xhtml">
+							Buscar
+							<i class="fa fa-search"></i>
+							</h:link></li>
+					</ul></li>
+
+				<li><h:link
+						outcome="/paginas/protegido/admin/Lista_Alunos.xhtml">
+						<i class="fa  fa-fw  fa-user"></i>Alunos</h:link>
+					<ul class="dropdown-menu" role="menu">
+						<li><h:link
+								outcome="/paginas/protegido/admin/Salvar_Aluno.xhtml">
+								Novo
+								<i class="fa fa-plus-circle"></i>
+							</h:link></li>
+						<li><h:link
+								outcome="/paginas/protegido/admin/Buscar_Alunos.xhtml">
+							Buscar
+							<i class="fa fa-search"></i>
+							</h:link></li>
+					</ul></li>
+
+				<li><h:link
+						outcome="/paginas/protegido/admin/Lista_Ofertas.xhtml">
+						<i class="fa  fa-cloud-upload"></i>Ofertas</h:link>
+					<ul class="dropdown-menu" role="menu">
+						<li><h:link
+								outcome="/paginas/protegido/admin/Salvar_Oferta.xhtml">
+								Nova
+								<i class="fa fa-plus-circle"></i>
+							</h:link></li>
+						<li><h:link
+								outcome="/paginas/protegido/admin/Buscar_Ofertas_Submetidas.xhtml">
+							Buscar
+							<i class="fa fa-plus-circle"></i>
+							</h:link></li>
+					</ul></li>
+				<li><h:link
+						outcome="/paginas/protegido/admin/Lista_Funcionarios.xhtml">
+						<i class="fa  fa-user-md"></i>Funcionários</h:link>
+					<ul class="dropdown-menu" role="menu">
+						<li><h:link
+								outcome="/paginas/protegido/admin/Salvar_Funcionario.xhtml">
+								Novo
+								<i class="fa fa-plus-circle"></i>
+							</h:link></li>
+						<li><h:link
+								outcome="/paginas/protegido/admin/Buscar_Funcionarios.xhtml">
+							Buscar
+							<i class="fa fa-search"></i>
+							</h:link></li>
+					</ul></li>
+
+			</h:form>
+			<h:form>
+				<li><h:link>
+						<i class="fa  fa-fw  fa-user"></i>Opções</h:link>
+					<ul class="dropdown-menu" role="menu">
+						<li><p:commandLink
+								action="/paginas/protegido/funcionario/Lista_Chamada_Dia.xhtml"
+								rendered="#{menu.isUserInRole('FUNCIONARIO')}">
+						Chamada do dia.
+						<i class="fa fa-edit"></i>
+							</p:commandLink></li>
+						<li><p:commandLink
+								action="/paginas/protegido/aluno/Index_Aluno.xhtml"
+								rendered="#{menu.isUserInRole('ALUNO')}">
+						Ofertas disponíveis.
+						<i class="fa fa-edit"></i>
+							</p:commandLink></li>
+						<li><p:commandLink id="menuItemChangeYourPassword"
+								action="#{userEditOwnPassword.init()}"
+								oncomplete="if (!args.validationFailed) { PF('editOwnPasswordDialog').show() }"
+								update=":editOwnPasswordDialogId">
+						Editar senha.
+						<i class="fa fa-edit"></i>
+							</p:commandLink></li>
+						<li><p:commandLink action="#{logout.efetuarLogout()}">
+								Sair
+								<i class="fa fa-power-off"></i>
+							</p:commandLink></li>
+
+					</ul></li>
+
+			</h:form>
+
+		</ul>
+	</nav>
+	<ui:include src="/WEB-INF/templates/Editar_Senha_Users.xhtml" />
+</ui:composition>

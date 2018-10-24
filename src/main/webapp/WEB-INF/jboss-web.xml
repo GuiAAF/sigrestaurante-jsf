@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE jboss-web PUBLIC "-//JBoss//DTD Web Application 2.4//EN" "http://www.jboss.org/j2ee/dtd/jboss-web_5_0.dtd">
+<jboss-web>
+	<security-domain>restauranteJdbcRealm</security-domain>
+	<context-root>/Restaurante-Estudantil</context-root>
+	<security-role>
+		<role-name>ADMIN</role-name>
+		<principal-name>ADMIN</principal-name>
+	</security-role>
+	<security-role>
+		<role-name>ALUNO</role-name>
+		<principal-name>ALUNO</principal-name>
+	</security-role>
+	<security-role>
+		<role-name>FUNCIONARIO</role-name>
+		<principal-name>FUNCIONARIO</principal-name>
+	</security-role>
+</jboss-web>

@@ -1,0 +1,203 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:o="http://omnifaces.org/ui" xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/Layout.xhtml">
+
+
+	<ui:define name="content">
+
+		<h:outputScript name="locale-primefaces.js" library="js" />
+
+		<h1 class="aw-page-title">Buscar Ofertas</h1>
+
+		<p:growl id="idMessages" showDetail="true" autoUpdate="true"
+			severity="info" />
+
+		<p:messages id="idMessagesErrors" showDetail="true" closable="true"
+			severity="error" />
+
+		<h:form id="formFiltro">
+			<div class="ui-fluid">
+				<p:tabView style="margin-top: 20px">
+					<p:tab title="Filtros">
+						<p:panelGrid columns="2" layout="grid"
+							columnClasses="ui-grid-col-2, ui-grid-col-4, ui-grid-col-2, ui-grid-col-4"
+							styleClass="panelgrid-noborder">
+							<f:facet name="header">
+								<h:outputText value="Campos de busca" />
+							</f:facet>
+
+							<p:outputLabel for="dataInicial"
+								value="Data de início do intervalo" />
+							<ui:include src="/WEB-INF/templates/_calendario.xhtml">
+								<ui:param name="id" value="dataInicial" />
+								<ui:param name="required" value="false" />
+								<ui:param name="value"
+									value="#{filtrar_Oferta.ofertaFilter.dataIntervaloInicial}" />
+							</ui:include>
+
+							<p:outputLabel for="dataTermino"
+								value="Data de termino do intervalo" />
+							<ui:include src="/WEB-INF/templates/_calendario.xhtml">
+								<ui:param name="id" value="dataTermino" />
+								<ui:param name="required" value="false" />
+								<ui:param name="value"
+									value="#{filtrar_Oferta.ofertaFilter.dataIntervaloFinal}" />
+							</ui:include>
+
+							<p:outputLabel value="Matricula: " for="idMatricula" />
+							<p:inputText id="idMatricula" type="number"
+								value="#{filtrar_Oferta.matriculaAluno}"
+								label="Pesquisar pela matricula" />
+
+							<h:panelGrid columns="1">
+								<p:selectOneRadio id="radio"
+									value="#{filtrar_Oferta.ofertaFilter.ofertada}"
+									layout="responsive" columns="5">
+									<f:selectItem itemLabel="Ofertadas" itemValue="true" />
+									<f:selectItem itemLabel="Não ofertadas" itemValue="false" />
+								</p:selectOneRadio>
+
+								<p:selectOneRadio id="radio2"
+									value="#{filtrar_Oferta.ofertaFilter.solicitada}"
+									layout="responsive" columns="5">
+									<f:selectItem itemLabel="Solicitadas" itemValue="true" />
+									<f:selectItem itemLabel="Não Solicitadas" itemValue="false" />
+								</p:selectOneRadio>
+							</h:panelGrid>
+
+							<h:panelGrid columns="2" style="margin-bottom:10px"
+								cellpadding="5">
+								<p:commandButton id="btnFiltrarBotao" value="Buscar"
+									action="#{filtrar_Oferta.filtrar()}"
+									update=":formFiltro :dataTableUsuarios idMessagesErrors"
+									icon="fa fa-search" />
+								<p:commandButton id="btnLimparBotao" value="Limpar"
+									action="#{filtrar_Oferta.limpar()}"
+									update=":formFiltro idMessagesErrors" process="@this"
+									icon="fa fa-times-circle">
+									<p:resetInput target=":formFiltro" />
+								</p:commandButton>
+							</h:panelGrid>
+
+						</p:panelGrid>
+					</p:tab>
+				</p:tabView>
+			</div>
+		</h:form>
+
+		<p:dataTable id="dataTableUsuarios" value="#{filtrar_Oferta.ofertas}"
+			reflow="true" var="oferta" style="margin-top: 20px"
+			emptyMessage="Nenhum registro encontrado.">
+
+			<p:column headerText="Data da oferta: " width="90">
+				<h:outputText value="#{oferta.dataOferta}" />
+			</p:column>
+
+			<p:column headerText="Aluno solicitante: ">
+				<h:outputText value="#{oferta.aluno.nome}" />
+			</p:column>
+
+			<p:column headerText="Matricula do aluno: " width="100">
+				<h:outputText value="#{oferta.aluno.login}" />
+			</p:column>
+
+			<p:column headerText="Já foi solicitada ?: ">
+				<h:outputText value="#{oferta.solicitada ? 'Sim' : 'Não'}" />
+			</p:column>
+
+			<p:column headerText="Refeições solicitadas: " width="120">
+				<h:outputText value="#{oferta.almoco ? 'Almoço' : ''}" />
+				<h:outputText value=" / "
+					rendered="#{oferta.almoco and oferta.janta}" />
+				<h:outputText value="#{oferta.janta ? 'Janta' : ''}" />
+			</p:column>
+			
+			<p:column headerText="Foi concretizada ?: " width="100">
+				<h:outputText value=" almoço #{oferta.almocoConcretizado ? 'Sim' : 'Não'}" rendered="#{oferta.almoco}"/>
+				<h:outputText value=" / "
+					rendered="#{oferta.almoco and oferta.janta}" />
+				<h:outputText value="janta #{oferta.jantaConcretizada? 'Sim' : 'Não'}" rendered="#{oferta.janta}"/>
+			</p:column>
+
+			<p:column headerText="Foi ofertada ?: ">
+				<h:outputText value="#{oferta.ofertada ? 'Sim' : 'Não'}" />
+			</p:column>
+
+			<p:column headerText="Motivo(caso não ofertada): " width="200">
+				<h:outputText value="#{oferta.msgExplicacao}" />
+			</p:column>
+
+			<p:column headerText="Opções" width="70">
+
+				<p:commandButton id="editUserDialog" icon="fa fa-edit"
+					action="#{filtrar_Oferta.init()}"
+					oncomplete="if (!args.validationFailed) { PF('userEditDialog').show() }"
+					update="userEditDialogId">
+					<f:setPropertyActionListener value="#{oferta}"
+						target="#{filtrar_Oferta.oferta}" />
+					<p:resetInput target="userEditDialogId" />
+				</p:commandButton>
+				<p:tooltip id="toolTipEditUserDialog" for="editUserDialog"
+					value="Editar oferta" position="top" />
+			</p:column>
+		</p:dataTable>
+
+		<p:dialog id="userEditDialogId" widgetVar="userEditDialog"
+			header="User edit" modal="true" dynamic="true" closeOnEscape="true">
+
+			<p:messages id="idMessagesErrorsUserEdit" showDetail="true"
+				closable="true" autoUpdate="true" severity="error" />
+
+			<h:form id="formEdit">
+
+				<p:panelGrid columns="1" layout="grid"
+					columnClasses="ui-grid-col-2, ui-grid-col-4, ui-grid-col-2, ui-grid-col-4"
+					styleClass="panelgrid-noborder">
+
+					<p:outputLabel for="creditos" value="Creditos do aluno: " />
+					<p:outputLabel id="creditos"
+						value="#{filtrar_Oferta.oferta.aluno.creditos}" />
+
+					<p:outputLabel for="primeiroNome" value="Nome: " />
+					<p:outputLabel id="primeiroNome"
+						value="#{filtrar_Oferta.oferta.aluno.nome}" />
+
+					<p:outputLabel for="matricula" value="Metricula: " />
+					<p:outputLabel id="matricula"
+						value="#{filtrar_Oferta.oferta.aluno.login}" />
+
+					<h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">
+						<h:outputText value="Almoço ?: " />
+						<p:selectBooleanButton id="value1"
+							value="#{filtrar_Oferta.oferta.almoco}" onLabel="Sim"
+							offLabel="Não" style="width:60px" />
+						<h:outputText value="Janta ?: " />
+						<p:selectBooleanButton id="value2"
+							value="#{filtrar_Oferta.oferta.janta}" onLabel="Sim"
+							offLabel="Não" style="width:60px" />
+					</h:panelGrid>
+
+				</p:panelGrid>
+
+				<p:panelGrid columns="2" styleClass="ui-noborder">
+					<p:commandButton id="botaoSubmeter"
+						action="#{filtrar_Oferta.update()}" value="Atualizar"
+						update="dataTableUsuarios"
+						oncomplete="if (!args.validationFailed) { PF('userEditDialog').hide(); }"
+						icon="fa fa-save" />
+					<p:commandButton id="botaoCancelar" value="Cancelar"
+						oncomplete="PF('userEditDialog').hide();" icon="fa fa-remove" />
+				</p:panelGrid>
+
+				<p:defaultCommand target="formEdit:botaoSubmeter" />
+
+			</h:form>
+
+		</p:dialog>
+
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<ui:composition template="/WEB-INF/templates/Layout_login.xhtml">
+
+	<f:metadata>
+		<!-- TODO: Verificar se funciona usando o f:viewAction -->
+		<f:event id="postConstructorEvent"
+			type="javax.faces.event.PreRenderComponentEvent"
+			listener="#{erroPaginaLogin.dispararMensagemLoginErro(param['error'])}" />
+	</f:metadata>
+
+	<ui:define name="content">
+		<p:growl id="idMessages" showDetail="true" autoUpdate="true"
+			severity="info" />
+		<p:messages id="idMessagesErrors" showDetail="true" autoUpdate="true"
+			closable="true" severity="error" />
+
+		<!-- <p:panel header="Login" style="width : 100%; text-align:center"> -->
+		<p:panel header="Login"
+			style="width: 30%; text-align:center; margin: auto;">
+
+			<!-- <form method="post" action="j_security_check"> -->
+			<h:form id="formLogin" prependId="false"
+				onsubmit="action='j_security_check';">
+
+				<h:panelGrid columns="2" style="text-align:center; margin: auto;">
+
+					<h:outputLabel for="j_username" value="Login:" />
+					<h:inputText id="j_username" />
+
+					<h:outputLabel for="j_password" value="Senha:" />
+					<h:inputSecret id="j_password" />
+
+					<p:commandButton id="btnLogin" value="Login" ajax="false"
+						icon="fa fa-sign-in" />
+					<p:commandButton id="btnReset" value="Reset" ajax="false"
+						type="reset" icon="fa fa-remove" />
+
+				</h:panelGrid>
+			</h:form>
+		</p:panel>
+	</ui:define>
+
+</ui:composition>
+</html>

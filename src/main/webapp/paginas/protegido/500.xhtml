@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+	
+<ui:composition template="/WEB-INF/templates/Layout_any.xhtml">
+
+	<ui:define name="content">
+		<h1 class="aw-page-title"> Erro 500 </h1>
+		
+		<p:messages id="idMessagesErrors" showDetail="true" autoUpdate="true" closable="true" severity="error" />
+
+		<p:link value="   Erro! Entre em contato com o administrador. Ir para a página principal ..." outcome="/paginas/protegido/index.xhtml" />
+		
+	</ui:define>
+</ui:composition>
+</html>

@@ -1,0 +1,73 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	template="/WEB-INF/templates/Layout.xhtml">
+
+	<f:metadata>
+		<o:viewParam name="aluno" value="#{salvar_Aluno.aluno}"
+			converter="userConverter" />
+		<f:viewAction action="#{salvar_Aluno.init()}" />
+	</f:metadata>
+
+
+	<ui:define name="content">
+		<h1 class="aw-page-title">Novo aluno</h1>
+
+		<p:growl id="idMessagesSucesso" showDetail="true" autoUpdate="true"
+			closable="true" severity="info" />
+		<p:messages id="idMessagesErrors" autoUpdate="true" closable="true"
+			showDetail="true" severity="error" />
+
+
+		<h:form id="frm">
+			<div class="ui-fluid">
+				<p:tabView style="margin-top: 20px">
+
+					<p:tab title="Dados básicos">
+
+						<p:panelGrid columns="2" layout="grid"
+							columnClasses="ui-grid-col-2, ui-grid-col-4, ui-grid-col-2, ui-grid-col-4"
+							styleClass="panelgrid-noborder">
+
+							<p:outputLabel value="Nome:" for="primeiroNome" />
+							<p:inputText id="primeiroNome" required="true"
+								value="#{salvar_Aluno.aluno.nome}" />
+
+							<p:outputLabel value="Matrícula" for="matricula" />
+							<p:inputText id="matricula" required="true" type="number"
+								value="#{salvar_Aluno.aluno.login}" />
+
+							<p:outputLabel value="Edital referente:" for="edital" />
+							<p:selectOneMenu id="edital"
+								value="#{salvar_Aluno.aluno.editalVigente}"
+								converter="editalConverter">
+								<f:selectItem itemLabel="Selecione" itemValue="#{null}"
+									noSelectionOption="true" itemDisabled="true" />
+								<f:selectItems value="#{salvar_Aluno.editais}" var="e"
+									itemLabel="#{e.numero}" itemValue="#{e}" />
+							</p:selectOneMenu>
+
+							<p:panelGrid columns="1" layout="grid">
+								<p:commandButton value="Salvar" icon="fa fa-save" update="frm"
+									action="#{salvar_Aluno.saveUser()}" />
+									<p:button id="botaoCancelar"
+									outcome="/paginas/protegido/index.xhtml" value="Cancelar"
+									icon="fa fa-remove" />
+							</p:panelGrid>
+
+						</p:panelGrid>
+
+					</p:tab>
+
+				</p:tabView>
+
+			</div>
+
+		</h:form>
+		
+	</ui:define>
+
+</ui:composition>

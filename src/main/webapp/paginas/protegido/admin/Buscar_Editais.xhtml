@@ -1,0 +1,182 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:o="http://omnifaces.org/ui" xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/Layout.xhtml">
+
+	<f:metadata>
+		<f:viewAction action="#{indexAdm.atualizarBd()}" />
+	</f:metadata>
+
+
+	<ui:define name="content">
+
+		<h:outputScript name="locale-primefaces.js" library="js" />
+
+		<h1 class="aw-page-title">Buscar Edital</h1>
+
+		<p:growl id="idMessages" showDetail="true" autoUpdate="true"
+			severity="info" />
+
+		<p:messages id="idMessagesErrors" showDetail="true" closable="true"
+			severity="error" />
+
+		<h:form id="formFiltro">
+			<p:toolbar>
+				<p:toolbarGroup align="right">
+					<p:commandButton value="Atualizar"
+						action="#{indexAdm.atualizarBd()}" update="dataTableEditais" />
+				</p:toolbarGroup>
+			</p:toolbar>
+			<div class="ui-fluid">
+				<p:tabView style="margin-top: 20px">
+					<p:tab title="Filtros">
+						<p:panelGrid columns="2" layout="grid"
+							columnClasses="ui-grid-col-2, ui-grid-col-4, ui-grid-col-2, ui-grid-col-4"
+							styleClass="panelgrid-noborder">
+							<f:facet name="header">
+								<h:outputText value="Campos de busca" />
+							</f:facet>
+
+							<p:outputLabel value="Numero: " for="idNumero" />
+							<p:inputText id="idNumero"
+								value="#{filtrar_Edital.editalFilter.numero}"
+								label="Numero do edital" />
+
+							<p:outputLabel for="dataInicial"
+								value="Data de início do intervalo" />
+							<ui:include src="/WEB-INF/templates/_calendario.xhtml">
+								<ui:param name="id" value="dataInicial" />
+								<ui:param name="required" value="false" />
+								<ui:param name="value"
+									value="#{filtrar_Edital.editalFilter.dataIntervaloInicial}" />
+							</ui:include>
+
+							<p:outputLabel for="dataTermino" value="Data final do intervalo" />
+							<ui:include src="/WEB-INF/templates/_calendario.xhtml">
+								<ui:param name="id" value="dataTermino" />
+								<ui:param name="required" value="false" />
+								<ui:param name="value"
+									value="#{filtrar_Edital.editalFilter.dataIntervaloFinal}" />
+							</ui:include>
+
+							<p:selectOneRadio id="radio"
+								value="#{filtrar_Edital.editalFilter.vigente}" layout="responsive"
+								columns="5">
+								<f:selectItem itemLabel="Editais Vigentes" itemValue="true" />
+								<f:selectItem itemLabel="Não vigentes" itemValue="false" />
+							</p:selectOneRadio>
+
+
+
+							<h:panelGrid columns="2" style="margin-bottom:10px"
+								cellpadding="5">
+
+								<p:commandButton id="btnFiltrarBotao" value="Buscar"
+									action="#{filtrar_Edital.filtrar()}" icon="fa fa-search"
+									update=":formFiltro :dataTableEditais idMessagesErrors" />
+								<p:commandButton id="btnLimparBotao" value="Limpar"
+									action="#{filtrar_Edital.limpar()}" icon="fa fa-times-circle"
+									update=":formFiltro idMessagesErrors" process="@this">
+									<p:resetInput target=":formFiltro" />
+								</p:commandButton>
+							</h:panelGrid>
+
+						</p:panelGrid>
+					</p:tab>
+				</p:tabView>
+			</div>
+		</h:form>
+
+		<p:dataTable id="dataTableEditais" value="#{filtrar_Edital.editais}"
+			reflow="true" var="edital" style="margin-top: 20px"
+			emptyMessage="Nenhum registro encontrado.">
+
+			<p:column headerText="Numero do edital">
+				<h:outputText value="#{edital.numero}" />
+			</p:column>
+			<p:column headerText="Data de inicio">
+				<h:outputText value="#{edital.dataInicio}">
+					<f:convertDateTime pattern="dd-MM-yyyy" />
+				</h:outputText>
+			</p:column>
+			<p:column headerText="Data de termino">
+				<h:outputText value="#{edital.dataTermino}">
+					<f:convertDateTime pattern="dd-MM-yyyy" />
+				</h:outputText>
+			</p:column>
+			<p:column headerText="Vigente">
+				<h:outputText value="#{edital.vigente ? 'Sim' : 'Não'}" />
+			</p:column>
+			<p:column headerText="Opções" width="300">
+
+				<p:commandButton id="editEditalDialog" icon="fa fa-edit"
+					action="#{editar_Edital.init()}"
+					oncomplete="if (!args.validationFailed) { PF('editalEditDialog').show() }"
+					update=":editalEditDialogId">
+					<f:setPropertyActionListener value="#{edital}"
+						target="#{editar_Edital.edital}" />
+					<p:resetInput target="editalEditDialogId" />
+				</p:commandButton>
+				<p:tooltip id="toolTipEditEditalDialog" for="editEditalDialog"
+					value="Editar edital" position="top" />
+			</p:column>
+		</p:dataTable>
+
+		<p:dialog id="editalEditDialogId" widgetVar="editalEditDialog"
+			header="Editar edital" modal="true" dynamic="true"
+			closeOnEscape="true">
+
+			<p:messages id="idMessagesErrorsEditalEdit" showDetail="true"
+				closable="true" autoUpdate="true" severity="error" />
+
+			<h:form id="formEdit">
+
+				<p:panelGrid columns="2" layout="grid"
+					columnClasses="ui-grid-col-2, ui-grid-col-4, ui-grid-col-2, ui-grid-col-4"
+					styleClass="panelgrid-noborder">
+
+					<p:outputLabel value="Id:" />
+					<p:outputLabel value="#{editar_Edital.edital.id}" />
+
+					<p:outputLabel value="Número do edital" for="numero" />
+					<p:inputText id="numero" required="true"
+						value="#{editar_Edital.edital.numero}" />
+
+					<p:outputLabel for="dataInicial" value="Data de início" />
+					<ui:include src="/WEB-INF/templates/_calendario.xhtml">
+						<ui:param name="id" value="dataInicial" />
+						<ui:param name="required" value="true" />
+						<ui:param name="value" value="#{editar_Edital.edital.dataInicio}" />
+					</ui:include>
+
+					<p:outputLabel for="dataTermino" value="Data de termino" />
+					<ui:include src="/WEB-INF/templates/_calendario.xhtml">
+						<ui:param name="id" value="dataTermino" />
+						<ui:param name="required" value="true" />
+						<ui:param name="value" value="#{editar_Edital.edital.dataTermino}" />
+					</ui:include>
+
+				</p:panelGrid>
+
+				<p:panelGrid columns="2" styleClass="ui-noborder">
+					<p:commandButton id="botaoSubmeter"
+						action="#{editar_Edital.saveEdital()}" value="Salvar"
+						update="dataTableEditais"
+						oncomplete="if (!args.validationFailed) { PF('editalEditDialog').hide(); }"
+						icon="fa fa-save" />
+					<p:commandButton id="botaoCancelar" value="Cancel"
+						oncomplete="PF('editalEditDialogId').hide();" icon="fa fa-remove" />
+				</p:panelGrid>
+
+				<p:defaultCommand target="formEdit:botaoSubmeter" />
+
+			</h:form>
+
+		</p:dialog>
+
+
+	</ui:define>
+
+</ui:composition>

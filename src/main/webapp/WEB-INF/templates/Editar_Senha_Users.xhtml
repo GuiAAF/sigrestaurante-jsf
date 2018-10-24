@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:o="http://omnifaces.org/ui">
+
+<ui:composition >
+	
+	
+	<p:dialog id="editOwnPasswordDialogId" widgetVar="editOwnPasswordDialog" header="Mudar senha" modal="true" dynamic="true" closeOnEscape="true">
+	
+		<h:form id="formEditOwnPassword">
+			<p:messages id="idMessagesErrorsUserChangeOwnPassword" showDetail="true" autoUpdate="true" closable="true" severity="error" />
+	
+			<h:outputText value="#{userEditOwnPassword.user.grupo}: #{userEditOwnPassword.user.nome}" />
+			<h:panelGrid columns="2" styleClass="ui-noborder">
+				<f:facet name="header">Senha</f:facet>
+	
+				<p:outputLabel for="currentPassword" value="Senha atual:" />
+				<p:password id="currentPassword" value="#{userEditOwnPassword.confirmacaoPasswordAtual}" label="Current Password" required="true" />
+	
+				<p:outputLabel for="password" value="Nova senha:" />
+				<p:password id="password" value="#{userEditOwnPassword.user.senha}" label="New Password" match="confirmPassword" feedback="true" required="true" />
+	
+				<p:outputLabel for="confirmPassword" value="Confirmar nova senha:" />
+				<p:password id="confirmPassword" value="#{userEditOwnPassword.user.senha}" label="Confirm Password" feedback="true" required="true" />
+	
+				<p:commandButton id="botaoSubmeterEditPassword" value="Salvar"  icon="fa fa-save" 
+					actionListener="#{userEditOwnPassword.changePassword}" 
+					oncomplete="if (!args.validationFailed) { PF('editOwnPasswordDialog').hide() }"
+					ignoreAutoUpdate="true" update="idMessagesErrorsUserChangeOwnPassword"/>
+				<p:commandButton id="botaoCancelarEditPassword" value="Cancelar" icon="fa fa-remove" process="@this" oncomplete="PF('editOwnPasswordDialog').hide();" />
+			</h:panelGrid>
+		</h:form>
+	
+	</p:dialog>
+	
+</ui:composition>
+</html>

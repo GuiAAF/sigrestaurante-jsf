@@ -1,0 +1,159 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:o="http://omnifaces.org/ui" xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/Layout.xhtml">
+
+
+	<ui:define name="content">
+
+		<h1 class="aw-page-title">Buscar Aluno</h1>
+
+		<p:growl id="idMessages" showDetail="true" autoUpdate="true"
+			severity="info" />
+
+		<p:messages id="idMessagesErrors" showDetail="true" closable="true"
+			severity="error" />
+
+		<h:form id="formFiltro">
+			<div class="ui-fluid">
+				<p:tabView style="margin-top: 20px">
+					<p:tab title="Filtros">
+						<p:panelGrid columns="2" layout="grid"
+							columnClasses="ui-grid-col-2, ui-grid-col-4, ui-grid-col-2, ui-grid-col-4"
+							styleClass="panelgrid-noborder">
+							<f:facet name="header">
+								<h:outputText value="Campos de busca" />
+							</f:facet>
+
+							<p:outputLabel value="Nome: " for="idNome" />
+							<p:inputText id="idNome" value="#{filtrar_Aluno.alunoFilter.nome}"
+								label="Pesquisar pelo primeiro nome">
+								<f:validator validatorId="stringValidator" />
+							</p:inputText>
+
+							<p:outputLabel value="Matricula: " for="idMatricula" />
+							<p:inputText id="idMatricula" type="number"
+								value="#{filtrar_Aluno.alunoFilter.login}"
+								label="Pesquisar pela matricula" />
+
+							<p:outputLabel value="Edital referente:" for="edital" />
+							<p:selectOneMenu id="edital"
+								value="#{filtrar_Aluno.alunoFilter.edital}"
+								converter="editalConverter">
+								<f:selectItem itemLabel="Selecione" itemValue="#{null}"
+									noSelectionOption="true" itemDisabled="true" />
+								<f:selectItems value="#{salvar_Aluno.editais}" var="e"
+									itemLabel="#{e.numero}" itemValue="#{e}" />
+							</p:selectOneMenu>
+
+							<h:panelGrid columns="2" style="margin-bottom:10px"
+								cellpadding="5">
+								<p:commandButton id="btnFiltrarBotao" value="Buscar"
+									action="#{filtrar_Aluno.filtrar()}"
+									update=":formFiltro :dataTableUsuarios idMessagesErrors"
+									icon="fa fa-search" />
+								<p:commandButton id="btnLimparBotao" value="Limpar"
+									action="#{filtrar_Aluno.limpar()}"
+									update=":formFiltro idMessagesErrors" process="@this"
+									icon="fa fa-times-circle">
+									<p:resetInput target=":formFiltro" />
+								</p:commandButton>
+							</h:panelGrid>
+
+						</p:panelGrid>
+					</p:tab>
+				</p:tabView>
+			</div>
+		</h:form>
+
+		<p:dataTable id="dataTableUsuarios" value="#{filtrar_Aluno.alunos}"
+			reflow="true" var="aluno" style="margin-top: 20px"
+			emptyMessage="Nenhum registro encontrado.">
+
+			<p:column headerText="Nome">
+				<h:outputText value="#{aluno.nome}" />
+			</p:column>
+
+			<p:column headerText="Matrícula">
+				<h:outputText value="#{aluno.login}" />
+			</p:column>
+
+			<p:column headerText="Número do edital referente">
+				<h:outputText value="#{aluno.editalVigente.numero}" />
+			</p:column>
+
+			<p:column headerText="Opções" width="300">
+
+				<p:commandButton id="editUserDialog" icon="fa fa-edit"
+					action="#{editar_Aluno.init()}"
+					oncomplete="if (!args.validationFailed) { PF('userEditDialog').show() }"
+					update="userEditDialogId">
+					<f:setPropertyActionListener value="#{aluno}"
+						target="#{editar_Aluno.aluno}" />
+					<p:resetInput target="userEditDialogId" />
+				</p:commandButton>
+				<p:tooltip id="toolTipEditUserDialog" for="editUserDialog"
+					value="Editar aluno" position="top" />
+
+			</p:column>
+		</p:dataTable>
+
+		<p:dialog id="userEditDialogId" widgetVar="userEditDialog"
+			header="User edit" modal="true" dynamic="true" closeOnEscape="true">
+
+			<p:messages id="idMessagesErrorsUserEdit" showDetail="true"
+				closable="true" autoUpdate="true" severity="error" />
+
+			<h:form id="formEdit">
+
+				<p:panelGrid columns="2" layout="grid"
+					columnClasses="ui-grid-col-2, ui-grid-col-4, ui-grid-col-2, ui-grid-col-4"
+					styleClass="panelgrid-noborder">
+
+					<p:outputLabel value="Id:" />
+					<p:outputLabel value="#{editar_Aluno.aluno.id}" />
+
+					<p:outputLabel value="Nome:" for="primeiroNome" />
+					<p:inputText id="primeiroNome" required="true"
+						value="#{editar_Aluno.aluno.nome}">
+						<f:validator validatorId="stringValidator" />
+					</p:inputText>
+
+					<p:outputLabel value="Edital referente:" for="edital" />
+					<p:selectOneMenu id="edital"
+						value="#{editar_Aluno.aluno.editalVigente}"
+						converter="editalConverter">
+						<f:selectItem
+							itemLabel="#{editar_Aluno.aluno.editalVigente.numero}"
+							itemValue="#{editar_Aluno.aluno.editalVigente}" />
+						<f:selectItems value="#{filtrar_Edital.editais}" var="e"
+							itemLabel="#{e.numero}" itemValue="#{e}" />
+					</p:selectOneMenu>
+
+					<p:outputLabel value="Matrícula" for="matricula" />
+					<p:inputText id="matricula" required="true"
+						value="#{editar_Aluno.aluno.login}" type="number" />
+
+				</p:panelGrid>
+
+				<p:panelGrid columns="2" styleClass="ui-noborder">
+					<p:commandButton id="botaoSubmeter"
+						action="#{editar_Aluno.saveUser()}" value="Submit"
+						update="dataTableUsuarios"
+						oncomplete="if (!args.validationFailed) { PF('userEditDialog').hide(); }"
+						icon="fa fa-save" />
+					<p:commandButton id="botaoCancelar" value="Cancel"
+						oncomplete="PF('userEditDialog').hide();" icon="fa fa-remove" />
+				</p:panelGrid>
+
+				<p:defaultCommand target="formEdit:botaoSubmeter" />
+
+			</h:form>
+
+		</p:dialog>
+
+	</ui:define>
+
+</ui:composition>
